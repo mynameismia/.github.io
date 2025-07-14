@@ -14,10 +14,16 @@
         }
         
         body {
-    background: linear-gradient(180deg, #0a0a2a 0%, #1a1a4a 25%, #2a2a6a 50%, #1a1a4a 75%, #0a0a2a 100%);
-    background-size: 100% 200%; /* 垂直方向拉伸，用于动画 */
-    animation: subtleShift 20s ease infinite alternate; /* 缓慢上下移动 */
+    /* 关键修改：设置背景图片 */
+    background-image: url('my-background.jpg'); /* 替换为您自己的图片文件名 */
     
+    /* 关键修改：控制背景图片如何显示 */
+    background-size: cover; /* 让图片铺满整个屏幕，不变形 */
+    background-position: center center; /* 将图片居中显示 */
+    background-repeat: no-repeat; /* 防止图片平铺重复 */
+    background-attachment: fixed; /* 固定背景，滚动时不移动 */
+    
+    /* 保留原有的其他样式 */
     color: #f5f5f5;
     min-height: 100vh;
     display: flex;
@@ -80,7 +86,7 @@
         
         .subtitle {
             font-size: 1.2rem;
-            color: #a0aec0;
+            color: #555555;
             max-width: 600px;
             margin: 0 auto;
             line-height: 1.6;
@@ -105,7 +111,7 @@
         .nfc-message {
             font-size: 1.8rem;
             margin-bottom: 30px;
-            color: #e2e8f0;
+            color: #2c3e50;
             font-weight: 500;
         }
         
@@ -118,6 +124,7 @@
             margin: 20px auto;
             font-size: 1.1rem;
             line-height: 1.6;
+            color: #2c3e50;
         }
         
         .divination-section {
@@ -138,7 +145,7 @@
             text-align: center;
             margin: 25px 0;
             font-size: 2rem;
-            color: #81e6d9;
+            color: #00BCD4;
             position: relative;
             padding-bottom: 15px;
         }
@@ -387,7 +394,99 @@
             .step { min-width: 100%; }
             .section-title { font-size: 1.6rem; }
         }
-    </style>
+/* =================================== */
+/* ===== 响应式设计 - 手机端适配 ===== */
+/* =================================== */
+
+/* 当屏幕宽度小于或等于 768px 时 (适用于平板和大部分手机横屏) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px; /* 减少页面整体边距 */
+    }
+
+    .container {
+        padding: 15px; /* 减少内容容器的内边距 */
+        margin-top: 10px;
+    }
+
+    h1 {
+        font-size: 2.2rem; /* 缩小主标题字体 */
+    }
+
+    .subtitle {
+        font-size: 1rem; /* 缩小副标题字体 */
+    }
+
+    .nfc-icon {
+        font-size: 6rem; /* 缩小NFC图标 */
+    }
+
+    .nfc-message {
+        font-size: 1.5rem; /* 缩小NFC提示文字 */
+    }
+
+    .section-title {
+        font-size: 1.8rem; /* 缩小“易经卜卦”标题 */
+    }
+
+    .hexagrams {
+        flex-direction: column; /* 关键：将本卦和变卦从左右并排改为上下堆叠 */
+        gap: 20px; /* 减小卦之间的间距 */
+    }
+
+    .hexagram {
+        min-width: 100%; /* 让每个卦占据全部宽度 */
+        padding: 20px;
+    }
+}
+
+/* 当屏幕宽度小于或等于 480px 时 (适用于绝大部分手机竖屏) */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8rem; /* 进一步缩小主标题 */
+    }
+
+    .nfc-message {
+        font-size: 1.3rem; /* 进一步缩小NFC提示 */
+    }
+
+    .nfc-hint {
+        padding: 10px 15px; /* 减小提示框的内边距 */
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+    }
+
+    .line {
+        width: 160px; /* 缩小卦爻的长度，使其在窄屏上更好看 */
+    }
+
+    .broken-line::before,
+    .broken-line::after {
+        width: 44%; /* 配合卦爻长度调整 */
+    }
+
+    .divination-process {
+        padding: 20px 15px; /* 减小“卜卦法”区域的内边距 */
+    }
+
+    .process-steps {
+        flex-direction: column; /* 将四个步骤从并排改为上下堆叠 */
+        align-items: center; /* 居中对齐 */
+    }
+
+    .step {
+        min-width: 100%; /* 让每个步骤占据全部宽度 */
+        max-width: none;
+    }
+
+    .interpretation-text {
+        font-size: 1rem; /* 调整解读文字大小 */
+    }
+}   
+ </style>
 </head>
 <body>
     <div class="container">
