@@ -1,0 +1,853 @@
+12:48 2025/7/4<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动易经卜卦 - NFC智慧占卜</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+    background: linear-gradient(180deg, #0a0a2a 0%, #1a1a4a 25%, #2a2a6a 50%, #1a1a4a 75%, #0a0a2a 100%);
+    background-size: 100% 200%; /* 垂直方向拉伸，用于动画 */
+    animation: subtleShift 20s ease infinite alternate; /* 缓慢上下移动 */
+    
+    color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+@keyframes subtleShift {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 0% 100%; }
+}
+
+/* 确保容器背景有足够的透明度，让body背景透出来 */
+.container {
+    max-width: 800px;
+    width: 100%;
+    /* 关键：使用半透明的白色或浅色背景，而不是深色 */
+    background: rgba(255, 255, 255, 0.15); /* 浅色半透明背景 */
+    
+    border-radius: 20px;
+     box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.5), /* 外部阴影 */
+        inset 0 0 20px rgba(79, 209, 197, 0.4); /* 内部发光，颜色可以和主题色呼应 */
+    overflow: hidden;
+    position: relative;
+    padding: 20px;
+    margin-top: 20px;
+    
+    /* 磨砂玻璃效果的核心 */
+    backdrop-filter: blur(20px) saturate(180%); /* 增加模糊度，增加饱和度让背景颜色更鲜艳 */
+    -webkit-backdrop-filter: blur(20px) saturate(180%); /* 兼容Safari */
+    
+    /* 增加一个细微的边框，模拟玻璃边缘 */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* 稍微亮一点的边框 */
+    
+    /* 增加一个内部阴影，模拟玻璃的厚度感 */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); 
+}
+
+
+        
+        header {
+            text-align: center;
+            padding: 25px 0;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(45deg, #f3ec78, #af4261);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0aec0;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .nfc-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+        
+        .nfc-icon {
+            font-size: 8rem;
+            color: #4fd1c5;
+            margin-bottom: 25px;
+            animation: pulse 2s infinite;
+        }
+        
+        .nfc-message {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+        
+        .nfc-hint {
+            background: rgba(79, 209, 197, 0.15);
+            border: 1px solid rgba(79, 209, 197, 0.3);
+            padding: 15px 25px;
+            border-radius: 15px;
+            max-width: 500px;
+            margin: 20px auto;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .divination-section {
+            display: none;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        
+        .divination-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 2rem;
+            color: #81e6d9;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #81e6d9, transparent);
+        }
+        
+        .results-container {
+            display: none;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 18px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .hexagrams {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .hexagram {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 25px;
+            border-radius: 18px;
+        }
+        
+        .hexagram-title {
+            font-size: 1.5rem;
+            color: #81e6d9;
+            margin-bottom: 20px;
+        }
+        
+        .hexagram-lines {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .line {
+            height: 8px;
+            width: 200px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .broken-line {
+            background: transparent;
+        }
+        
+        .broken-line::before,
+        .broken-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 45%;
+            height: 100%;
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+        
+        .broken-line::before {
+            left: 0;
+        }
+        
+        .broken-line::after {
+            right: 0;
+        }
+        
+        .changing {
+            position: relative;
+        }
+        
+        .changing::after {
+            content: '变';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f56565;
+            color: white;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .interpretation {
+            background: rgba(26, 32, 44, 0.8);
+            padding: 25px;
+            border-radius: 18px;
+            margin-top: 30px;
+            line-height: 1.8;
+        }
+        
+        .interpretation-title {
+            color: #f6ad55;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .interpretation-text {
+            font-size: 1.1rem;
+            color: #cbd5e0;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: justify;
+        }
+        
+        .divination-process {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(26, 32, 44, 0.6);
+            border-radius: 18px;
+            text-align: center;
+        }
+        
+        .process-title {
+            color: #68d391;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .process-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 15px;
+            max-width: 220px;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #4c51bf;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: bold;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #81e6d9;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid #81e6d9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 25px;
+        }
+        
+        .loading-text {
+            font-size: 1.3rem;
+            color: #a0aec0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #a0aec0;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+        
+        .auto-text {
+            color: #f6ad55;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            text-align: center;
+            animation: fadeInOut 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            .nfc-icon { font-size: 6rem; }
+            .hexagrams { flex-direction: column; }
+        }
+        
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .nfc-message { font-size: 1.4rem; }
+            .container { padding: 15px; }
+            .step { min-width: 100%; }
+            .section-title { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>今日解疑</h1>
+            <p class="subtitle">心中默念你的问题</p>
+        </header>
+        
+        <main>
+            <div class="nfc-section" id="nfcSection">
+                <i class="fas fa-nfc-symbol nfc-icon"></i>
+                <div class="nfc-message">请用NFC设备扫描标签</div>
+                <div class="nfc-hint">
+                    <p><i class="fas fa-lightbulb"></i>专注精神，命运正在揭晓</p>
+                    <p>系统已自动激活并生成卦象解读</p>
+                </div>
+            </div>
+            
+            <div class="divination-section" id="divinationSection">
+                <h2 class="section-title">易经卜卦</h2>
+                
+                <div class="divination-process">
+                    <h3 class="process-title">传统蓍草卜卦法</h3>
+                    <div class="auto-text">正在为您生成今日专属卦象...</div>
+                    <div class="process-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-title">分而为二以象两</div>
+                            <p>将49根蓍草随机分为两部分</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-title">挂一以象三</div>
+                            <p>从右边取出一根置于左手</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-title">揲之以四以象四时</div>
+                            <p>分别将左右两部分四根一组计数</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-title">归奇于扐以象闰</div>
+                            <p>将余数归拢，完成第一变</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text" id="loadingText">正在生成卦象，感悟天地之道...</div>
+                </div>
+                
+                <div class="results-container" id="resultsContainer">
+                    <div class="hexagrams">
+                        <div class="hexagram">
+                            <h3 class="hexagram-title" id="originalTitle">本卦：</h3>
+                            <div class="hexagram-lines" id="originalLines"></div>
+                        </div>
+                        <div class="hexagram">
+                            <h3 class="hexagram-title" id="changedTitle">变卦：</h3>
+                            <div class="hexagram-lines" id="changedLines"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="interpretation">
+                        <h3 class="interpretation-title">卦象解读</h3>
+                        <p class="interpretation-text" id="interpretationText">
+                            <!-- 卦象解读将在这里显示 -->
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <div class="footer">
+            <p>本系统采用传统蓍草卜卦法生成卦象 · 卦辞参考《周易正义》 · 仅供文化研究参考</p>
+            <p>© 2025 易经智慧占卜系统 | NFC技术支持</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nfcSection = document.getElementById('nfcSection');
+            const divinationSection = document.getElementById('divinationSection');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
+            const interpretationText = document.getElementById('interpretationText');
+            const originalTitle = document.getElementById('originalTitle');
+            const changedTitle = document.getElementById('changedTitle');
+            const originalLines = document.getElementById('originalLines');
+            const changedLines = document.getElementById('changedLines');
+            const autoText = document.querySelector('.auto-text');
+            
+            // 易经64卦名称
+            const hexagramNames = [
+                "乾为天", "坤为地", "水雷屯", "山水蒙", "水天需", "天水讼", "地水师", "水地比",
+                "风天小畜", "天泽履", "地天泰", "天地否", "天火同人", "火天大有", "地山谦", "雷地豫",
+                "泽雷随", "山风蛊", "地泽临", "风地观", "火雷噬嗑", "山火贲", "山地剥", "地雷复",
+                "天雷无妄", "山天大畜", "山雷颐", "泽风大过", "坎为水", "离为火", "泽山咸", "雷风恒",
+                "天山遁", "雷天大壮", "火地晋", "地火明夷", "风火家人", "火泽睽", "水山蹇", "雷水解",
+                "山泽损", "风雷益", "泽天夬", "天风姤", "泽地萃", "地风升", "泽水困", "水风井",
+                "泽火革", "火风鼎", "震为雷", "艮为山", "风山渐", "雷泽归妹", "雷火丰", "火山旅",
+                "巽为风", "兑为泽", "风水涣", "水泽节", "风泽中孚", "雷山小过", "水火既济", "火水未济"
+            ];
+            
+            // 模拟NFC扫描事件 - 实际应用中应由NFC事件触发
+            setTimeout(activateDivination, 3000);
+            
+            // 严格的大衍筮法（蓍草法）实现
+            function performDivision(remaining) {
+                // 1. 分而为二以象两
+                const left = Math.floor(Math.random() * (remaining - 1)) + 1;
+                const right = remaining - left;
+                
+                // 2. 挂一以象三
+                const hanging = 1;
+                const rightAfterHanging = right - hanging;
+                
+                // 3. 揲之以四以象四时
+                const leftRemainder = left % 4 || 4;
+                const rightRemainder = rightAfterHanging % 4 || 4;
+                
+                // 4. 归奇于扐以象闰
+                const remainderTotal = leftRemainder + rightRemainder + hanging;
+                
+                // 5. 计算剩余的蓍草
+                const newRemaining = remaining - remainderTotal;
+                
+                return {
+                    remainder: remainderTotal,
+                    remaining: newRemaining
+                };
+            }
+            
+            // 生成一爻（需要三变）
+            function generateYao() {
+                let remaining = 49; // 大衍之数五十，其用四十有九
+                let remainders = [];
+                
+                // 三变成一爻
+                for (let i = 0; i < 3; i++) {
+                    const result = performDivision(remaining);
+                    remainders.push(result.remainder);
+                    remaining = result.remaining;
+                }
+                
+                // 计算爻的类型
+                // 三变后剩余蓍草数除以4：36/4=9（老阳），32/4=8（少阴），28/4=7（少阳），24/4=6（老阴）
+                const sum = remaining / 4;
+                
+                return {
+                    value: sum, // 6,7,8,9
+                    remainders: remainders
+                };
+            }
+            
+            // 生成整个卦象（六爻）
+            function generateHexagram() {
+                const hexagram = [];
+                const changingLines = []; // 记录变爻位置
+                
+                // 从初爻（最下面）到上爻（最上面）
+                for (let i = 0; i < 6; i++) {
+                    const yao = generateYao();
+                    hexagram.push(yao.value);
+                    
+                    // 记录变爻（老阴6或老阳9）
+                    if (yao.value === 6 || yao.value === 9) {
+                        changingLines.push(5 - i); // 存储位置（0-5，0是最下面）
+                    }
+                }
+                
+                return {
+                    hexagram: hexagram,
+                    changingLines: changingLines
+                };
+            }
+            
+            // 根据卦象数值获取卦名
+            function getHexagramName(hexagramArray) {
+                // 将卦象转换为二进制：阳爻(7,9)为1，阴爻(6,8)为0
+                let binary = '';
+                for (let i = 5; i >= 0; i--) {
+                    binary += (hexagramArray[i] === 7 || hexagramArray[i] === 9) ? '1' : '0';
+                }
+                
+                // 二进制转十进制作为卦象索引
+                const index = parseInt(binary, 2);
+                return hexagramNames[index] || "未知卦";
+            }
+            
+            // 绘制卦象
+            function drawHexagram(container, hexagramArray, changingLines) {
+                container.innerHTML = '';
+                
+                // 从下往上绘制（初爻在最下面）
+                for (let i = 5; i >= 0; i--) {
+                    const line = document.createElement('div');
+                    
+                    if (hexagramArray[i] === 7 || hexagramArray[i] === 9) { // 阳爻
+                        line.className = 'line';
+                        if (hexagramArray[i] === 9) { // 老阳（变爻）
+                            line.classList.add('changing');
+                        }
+                    } else { // 阴爻
+                        line.className = 'line broken-line';
+                        if (hexagramArray[i] === 6) { // 老阴（变爻）
+                            line.classList.add('changing');
+                        }
+                    }
+                    
+                    container.appendChild(line);
+                }
+            }
+            
+            // 生成变卦
+            function generateChangedHexagram(originalHexagram) {
+                const changed = [...originalHexagram];
+                
+                for (let i = 0; i < 6; i++) {
+                    if (changed[i] === 6) { // 老阴变阳
+                        changed[i] = 7;
+                    } else if (changed[i] === 9) { // 老阳变阴
+                        changed[i] = 8;
+                    }
+                }
+                
+                return changed;
+            }
+            
+            // 使用DeepSeek API进行卦象解读
+            async function getDeepseekInterpretation(hexagramData) {
+                // ================== API配置 ==================
+                // !!! 警告: 请务必将 'YOUR_DEEPSEEK_API_KEY' 替换为您的真实API密钥 !!!
+                const apiKey = 'sk-7afc7e45bc7c4a2dad46fd80555c5ebe'; 
+                const apiUrl = 'https://api.deepseek.com/chat/completions';
+                // =============================================
+
+                loadingText.textContent = "正在结合您的信息与当下气场进行深度推演，约需一分钟...";
+
+                const originalName = getHexagramName(hexagramData.hexagram );
+                const changedHexagram = generateChangedHexagram(hexagramData.hexagram);
+                const changedName = getHexagramName(changedHexagram);
+
+                // 构建爻的描述
+                const yaoDescriptions = hexagramData.hexagram.map((yao, index) => {
+                    const position = ["初", "二", "三", "四", "五", "上"][5 - index];
+                    let yaoType = "";
+                    if (yao === 9) yaoType = "老阳（变爻）";
+                    else if (yao === 7) yaoType = "少阳";
+                    else if (yao === 6) yaoType = "老阴（变爻）";
+                    else if (yao === 8) yaoType = "少阴";
+                    return `${position}爻: ${yaoType}`;
+                }).join('，');
+
+                // 构建更详细的Prompt
+                const prompt = `
+                    你是一位精通《易经》的智者。请根据以下使用大衍筮法得到的卜卦结果，为卜卦者提供详细、深刻且富有启发性的解读。
+
+                    **卜卦结果:**
+                    - **本卦:** ${originalName}
+                    - **变卦:** ${changedName}
+                    - **爻象详情 (从上至下):** ${yaoDescriptions}
+                    - **变爻数量:** ${hexagramData.changingLines.length}
+
+                    **解读要求:**
+                    1.  **综合分析:** 首先，对本卦和变卦的卦名、卦象进行总体解读，阐述它们分别象征的处境和趋势。
+                    2.  **变爻解读:** 重点分析变爻。如果只有一个变爻，以该变爻的爻辞为核心进行解读；如果有多个变爻，综合分析其变化趋势。如果没有变爻，则以本卦的卦辞为核心。
+                    3.  **当前处境:** 结合本卦，分析卜卦者当前可能面临的状况或问题。
+                    4.  **未来趋势:** 结合变卦，揭示事物可能的发展方向和最终结果。
+                    5.  **行动指南:** 基于以上分析，为卜卦者提供清晰、具体、可操作的行动建议或人生启示。
+                    6.  **语言风格:** 请使用优雅、智慧且易于理解的语言，避免使用过于晦涩的术语。
+
+                    请开始你的解读：
+                `;
+
+                if (apiKey === 'YOUR_DEEPSEEK_API_KEY') {
+                    console.error("错误：尚未配置DeepSeek API密钥。");
+                    return "API密钥未配置。请在代码中设置您的DeepSeek API密钥后重试。";
+                }
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: 'deepseek-chat', // 或其他适用模型
+                            messages: [
+                                { "role": "system", "content": "你是一位深谙《易经》智慧的贤者，言语温和，洞察世事。请以富有哲理、充满人文关怀的口吻，为卜卦者提供一份专业解读。文字不要过于冗余，便于理解，避免晦涩术语，提供清晰、具体、可操作的行动建议或人生启示。请避免使用Markdown的标题（如#、##、###）或列表符号（如-、*），直接以流畅的文字叙述。" },
+                                { "role": "user", "content": prompt }
+                            ],
+                            max_tokens: 600,
+                            temperature: 0.7,
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("DeepSeek API 错误:", errorData);
+                        throw new Error(`API请求失败，状态码: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    // 将换行符\n替换为<br>以在HTML中正确显示
+                    let interpretation = data.choices[0].message.content;
+
+// 1. 将换行符\n替换为<br>以在HTML中正确显示
+interpretation = interpretation.replace(/\n/g, '<br>');
+
+// 2. 移除常见的Markdown标题符号（#、##、###）
+interpretation = interpretation.replace(/#+\s*/g, ''); 
+
+// 3. 移除常见的Markdown列表符号（-、*）
+interpretation = interpretation.replace(/[-*]\s*/g, '');
+
+// 4. 移除Markdown的粗体符号（**）
+interpretation = interpretation.replace(/\*\*/g, '');
+
+// 5. 移除Markdown的斜体符号（*）
+interpretation = interpretation.replace(/\*/g, '');
+
+// 6. 移除多余的连续<br>标签，避免空行过多
+interpretation = interpretation.replace(/(<br>\s*){2,}/g, '<br><br>');
+
+
+return interpretation; // 返回处理后的文本
+
+
+                } catch (error) {
+                    console.error("调用DeepSeek API时发生错误:", error);
+                    return "无法连接到智慧的源泉，解读暂时中断。请检查网络连接或API密钥后重试。";
+                }
+            }
+            
+            // 激活卜卦功能
+async function activateDivination() {
+    const lastDivinationDate = localStorage.getItem('lastDivinationDate');
+    const today = new Date().toDateString(); // 获取今天的日期字符串，例如 "Thu Jul 03 2025"
+
+    if (lastDivinationDate === today) {
+        // 如果今天已经卜卦过，则加载并显示历史结果
+        nfcSection.style.opacity = '0';
+        setTimeout(() => {
+            nfcSection.style.display = 'none';
+            divinationSection.classList.add('active'); // 显示卜卦区域
+            loading.style.display = 'none'; // 隐藏加载动画
+
+            const savedHexagramData = JSON.parse(localStorage.getItem('savedHexagramData'));
+            const savedInterpretation = localStorage.getItem('savedInterpretation');
+
+            if (savedHexagramData && savedInterpretation) {
+                // 恢复卦象和解读
+                originalTitle.textContent = `本卦：${getHexagramName(savedHexagramData.originalHexagram)}`;
+                changedTitle.textContent = `变卦：${getHexagramName(savedHexagramData.changedHexagram)}`;
+                drawHexagram(originalLines, savedHexagramData.originalHexagram, savedHexagramData.changingLines);
+                drawHexagram(changedLines, savedHexagramData.changedHexagram, []);
+                interpretationText.innerHTML = savedInterpretation;
+                
+                resultsContainer.style.display = 'block'; // 显示结果容器
+                autoText.textContent = "今日卦象已出，请明日获取新的提示。"; // 新增提示语
+            } else {
+                // 如果本地存储数据缺失，则显示通用提示
+                interpretationText.innerHTML = '<h3 style="color:#f6ad55; text-align:center;">今日卦象已出，但历史数据缺失。请明日获取新的提示。</h3>';
+                resultsContainer.style.display = 'block'; // 显示结果容器
+                autoText.textContent = "今日卦象已出，请明日获取新的提示。";
+            }
+        }, 500);
+        return; // 阻止后续卜卦流程
+    }
+
+    // 如果今天未卜卦，则继续正常流程
+    nfcSection.style.opacity = '0';
+    setTimeout(() => {
+        nfcSection.style.display = 'none';
+        divinationSection.classList.add('active');
+        
+        // 自动开始卜卦过程
+        setTimeout(autoDivination, 1000);
+    }, 500);
+}
+
+
+            
+           // 自动卜卦过程
+async function autoDivination() {
+    loading.style.display = 'block';
+    resultsContainer.style.display = 'none';
+    
+    // 生成卦象
+    const hexagramData = generateHexagram();
+    const originalHexagram = hexagramData.hexagram;
+    const changedHexagram = generateChangedHexagram(originalHexagram);
+    
+    // 获取卦名
+    const originalName = getHexagramName(originalHexagram);
+    const changedName = getHexagramName(changedHexagram);
+    
+    // 更新UI
+    originalTitle.textContent = `本卦：${originalName}`;
+    changedTitle.textContent = `变卦：${changedName}`;
+    
+    // 绘制卦象
+    drawHexagram(originalLines, originalHexagram, hexagramData.changingLines);
+    drawHexagram(changedLines, changedHexagram, []);
+    
+    // 获取DeepSeek解读
+    const interpretation = await getDeepseekInterpretation(hexagramData);
+    interpretationText.innerHTML = interpretation;
+    
+    // 显示结果
+    loading.style.display = 'none';
+    resultsContainer.style.display = 'block';
+    autoText.textContent = "卦象生成完成";
+
+    // ====== 新增代码：记录本次卜卦日期和结果 ======
+    const today = new Date().toDateString();
+    localStorage.setItem('lastDivinationDate', today);
+    
+    // 保存卦象数据（需要保存原始卦象、变爻信息和变卦）
+    const dataToSave = {
+        originalHexagram: originalHexagram,
+        changedHexagram: changedHexagram,
+        changingLines: hexagramData.changingLines // 变爻位置信息
+    };
+    localStorage.setItem('savedHexagramData', JSON.stringify(dataToSave)); // 将对象转换为JSON字符串保存
+    localStorage.setItem('savedInterpretation', interpretation); // 保存解读文本
+    // ======================================
+}
+
+
+            
+            // 初始化NFC功能（伪代码）
+            function initNFC() {
+                if ('NDEFReader' in window) {
+                    const nfcReader = new NDEFReader();
+                    
+                    nfcReader.scan()
+                        .then(() => {
+                            console.log("NFC扫描已激活");
+                            nfcReader.onreading = event => {
+                                console.log("NFC标签已扫描");
+                                activateDivination();
+                            };
+                        })
+                        .catch(error => {
+                            console.error(`NFC错误: ${error}`);
+                        });
+                } else {
+                    console.log("该浏览器不支持NFC功能");
+                }
+            }
+            
+            // 在实际应用中取消注释以下行
+            // initNFC();
+        });
+    </script>
+</body>
+</html>
