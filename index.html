@@ -248,13 +248,15 @@
             border-radius: 10px;
         }
         
-        .interpretation {
-            background: rgba(26, 32, 44, 0.8);
-            padding: 25px;
-            border-radius: 18px;
-            margin-top: 30px;
-            line-height: 1.8;
-        }
+       .interpretation {
+   
+    padding: 0;       /* 移除内边距 */
+    border-radius: 0; /* 移除圆角 */
+    margin-top: 25px; /* 可以保留或调整与上方卦象的间距 */
+    line-height: 1.8;
+    /* border: none; */ /* 如果有边框，用这行移除 */
+}
+
         
         .interpretation-title {
             color: #f6ad55;
@@ -263,16 +265,17 @@
             text-align: center;
         }
         
-        .interpretation-text {
-            font-size: 1.1rem;
-            color: #cbd5e0;
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            text-align: justify;
-        }
+       .interpretation-text {
+    font-size: 1.1rem;
+    color: #1a202c; /* 确保文字颜色在背景上清晰可见 */
+    max-height: none; /* 移除最大高度限制，让解读可以完全展示 */
+    overflow-y: visible; /* 移除滚动条 */
+    padding: 15px; /* 可以保留一些内边距，让文字不贴边 */
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    text-align: justify;
+}
+
         
         .divination-process {
             margin: 30px 0;
@@ -508,32 +511,7 @@
             <div class="divination-section" id="divinationSection">
                 <h2 class="section-title">易经卜卦</h2>
                 
-                <div class="divination-process">
-                    <h3 class="process-title">传统蓍草卜卦法</h3>
-                    <div class="auto-text">正在为您生成今日专属卦象...</div>
-                    <div class="process-steps">
-                        <div class="step">
-                            <div class="step-number">1</div>
-                            <div class="step-title">分而为二以象两</div>
-                            <p>将49根蓍草随机分为两部分</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">2</div>
-                            <div class="step-title">挂一以象三</div>
-                            <p>从右边取出一根置于左手</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">3</div>
-                            <div class="step-title">揲之以四以象四时</div>
-                            <p>分别将左右两部分四根一组计数</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">4</div>
-                            <div class="step-title">归奇于扐以象闰</div>
-                            <p>将余数归拢，完成第一变</p>
-                        </div>
-                    </div>
-                </div>
+             
                 
                 <div class="loading" id="loading">
                     <div class="loading-spinner"></div>
@@ -557,6 +535,32 @@
                         <p class="interpretation-text" id="interpretationText">
                             <!-- 卦象解读将在这里显示 -->
                         </p>
+                    </div>
+                </div>
+<div class="divination-process">
+                    <h3 class="process-title">传统蓍草卜卦法</h3>
+                    <div class="auto-text">正在为您生成今日专属卦象...</div>
+                    <div class="process-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-title">分而为二以象两</div>
+                            <p>将49根蓍草随机分为两部分</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-title">挂一以象三</div>
+                            <p>从右边取出一根置于左手</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-title">揲之以四以象四时</div>
+                            <p>分别将左右两部分四根一组计数</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-title">归奇于扐以象闰</div>
+                            <p>将余数归拢，完成第一变</p>
+                        </div>
                     </div>
                 </div>
             </div>
