@@ -489,7 +489,155 @@
         font-size: 1rem; /* 调整解读文字大小 */
     }
 }   
- </style>
+.changing::after {
+        /* 关键修改：重新定义“变”字在手机上的位置 */
+        top: -10px; /* 减小与爻线的垂直距离，使其更贴近 */
+        right: -35px; /* 不再使用left和transform，直接定位到爻线的右侧外 */
+        left: auto; /* 取消left属性 */
+        transform: none; /* 取消transform属性 */
+        
+        /* 也可以微调一下字体和内边距，让它在手机上更精致 */
+        font-size: 0.7rem;
+        padding: 1px 6px;
+    }
+}
+/* ================================= */
+/* ===== “建立信任”模块的全新样式 ===== */
+/* ================================= */
+
+/* 修改后的代码 */
+.trust-anchor-section {
+    width: 100%;
+    max-width: 700px;
+    margin: 40px auto 20px;
+    /* 关键修改：使用一个不透明的、有质感的深色背景 */
+    background: #1a202c; /* 一个非常深的蓝灰色，几乎是黑色 */
+    /* 增加一个微妙的内部阴影，提升质感 */
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid rgba(79, 209, 197, 0.3); /* 保留一个科技感的边框 */
+    padding: 30px;
+}
+
+
+.trust-title {
+    font-size: 1.8rem;
+    color: #f6ad55; /* 使用醒目的金色 */
+    margin-bottom: 10px;
+}
+
+.trust-subtitle {
+    font-size: 1.1rem;
+    color: #a0aec0; /* 柔和的灰色 */
+    margin-bottom: 30px;
+}
+
+.trust-footer {
+    font-size: 1rem;
+    color: #68d391; /* 充满希望的绿色 */
+    margin-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+/* 时间线样式 */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+    text-align: left;
+}
+
+/* 中间的垂直线 */
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    padding-left: 50px; /* 为图标和线留出空间 */
+    opacity: 0; /* 初始不可见 */
+    animation: fadeIn-up 0.8s ease forwards; /* 应用动画 */
+}
+
+/* 为每个步骤设置不同的动画延迟，实现依次出现的效果 */
+.timeline-item:nth-child(1) { animation-delay: 0.2s; }
+.timeline-item:nth-child(2) { animation-delay: 0.6s; }
+.timeline-item:nth-child(3) { animation-delay: 1.0s; }
+.timeline-item:nth-child(4) { animation-delay: 1.4s; }
+
+
+.timeline-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #4c51bf; /* 科技感的蓝色 */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.timeline-content h4 {
+    font-size: 1.3rem;
+    color: #81e6d9; /* 清新的青色 */
+    margin-bottom: 8px;
+}
+
+.timeline-content p {
+    font-size: 1rem;
+    color: #cbd5e0; /* 易读的浅灰色 */
+    line-height: 1.6;
+}
+
+/* 定义渐入动画 */
+@keyframes fadeIn-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 手机端适配 */
+@media (max-width: 480px) {
+    .trust-anchor-section {
+        padding: 20px 15px;
+    }
+    .trust-title {
+        font-size: 1.5rem;
+    }
+    .timeline::before {
+        left: 15px;
+    }
+    .timeline-item {
+        padding-left: 45px;
+    }
+    .timeline-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+        left: 0;
+    }
+}
+ 
+</style>
 </head>
 <body>
     <div class="container">
@@ -537,32 +685,44 @@
                         </p>
                     </div>
                 </div>
-<div class="divination-process">
-                    <h3 class="process-title">传统蓍草卜卦法</h3>
-                    <div class="auto-text">正在为您生成今日专属卦象...</div>
-                    <div class="process-steps">
-                        <div class="step">
-                            <div class="step-number">1</div>
-                            <div class="step-title">分而为二以象两</div>
-                            <p>将49根蓍草随机分为两部分</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">2</div>
-                            <div class="step-title">挂一以象三</div>
-                            <p>从右边取出一根置于左手</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">3</div>
-                            <div class="step-title">揲之以四以象四时</div>
-                            <p>分别将左右两部分四根一组计数</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">4</div>
-                            <div class="step-title">归奇于扐以象闰</div>
-                            <p>将余数归拢，完成第一变</p>
-                        </div>
-                    </div>
-                </div>
+<!-- ===== 全新设计的“古法演算”模块 ===== -->
+<div class="trust-anchor-section">
+    <h3 class="trust-title">遵循古法：大衍筮（shì）法演算</h3>
+    <p class="trust-subtitle" id="trustSubtitle">演算中... 正在为您重现18次复杂运算以成一卦</p>
+    
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-icon">一</div>
+            <div class="timeline-content">
+                <h4>分二象两</h4>
+                <p>将四十九根蓍草随机分作两堆，象征天地初分，阴阳始判。</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon">二</div>
+            <div class="timeline-content">
+                <h4>挂一象三</h4>
+                <p>从右堆取一根置于指间，象征天、地、人三才之道。</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon">三</div>
+            <div class="timeline-content">
+                <h4>揲四象时</h4>
+                <p>两堆蓍草分别以四根为一组数过，象征四季轮回，周而复始。</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon">四</div>
+            <div class="timeline-content">
+                <h4>归奇象闰</h4>
+                <p>将每堆的余数归拢，此为“一变”。三变方成一爻，六爻共需十八变。</p>
+            </div>
+        </div>
+    </div>
+    <p class="trust-footer">我们严格遵循此法，确保每一次演算都蕴含着《易经》的古老智慧。</p>
+</div>
+
             </div>
         </main>
         
@@ -908,7 +1068,10 @@ async function autoDivination() {
     // 显示结果
     loading.style.display = 'none';
     resultsContainer.style.display = 'block';
-    autoText.textContent = "卦象生成完成";
+     const trustSubtitle = document.getElementById('trustSubtitle');
+    if (trustSubtitle) {
+        trustSubtitle.textContent = "演算完成。以下是《易经》给予您的启示：";
+    }
 
     // ====== 新增代码：记录本次卜卦日期和结果 ======
     const today = new Date().toDateString();
